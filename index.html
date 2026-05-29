@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="quoteheroes-submit-endpoint" content="" />
   <title>Quote Heroes | Get Local Quotes Fast</title>
   <style>
     :root {
@@ -113,6 +114,39 @@
       font-size: 0.95rem;
     }
 
+    .nav-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      place-items: center;
+      gap: 4px;
+      padding: 10px;
+    }
+
+    .nav-toggle span {
+      width: 20px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--navy);
+      transition: 0.2s ease;
+    }
+
+    .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -132,6 +166,12 @@
     .button:hover {
       background: var(--blue-dark);
       transform: translateY(-1px);
+    }
+
+    .button:disabled {
+      cursor: wait;
+      opacity: 0.72;
+      transform: none;
     }
 
     .button.secondary {
@@ -289,6 +329,10 @@
       resize: vertical;
     }
 
+    input[type="file"] {
+      padding: 11px 14px;
+    }
+
     input:focus,
     textarea:focus,
     select:focus {
@@ -324,8 +368,25 @@
 
     .dynamic-fields {
       display: grid;
-      gap: 4px;
+      gap: 12px;
       margin-top: 10px;
+    }
+
+    .dynamic-fields:empty {
+      display: none;
+    }
+
+    .field-help,
+    .submit-status {
+      font-size: 0.84rem;
+      color: #64748b;
+      margin-top: 8px;
+    }
+
+    .submit-status {
+      min-height: 1.4em;
+      font-weight: 800;
+      color: #1e40af;
     }
 
     .section {
@@ -418,6 +479,10 @@
       background: #0f172a;
       color: white;
       padding: 18px;
+    }
+
+    .demo-output.show {
+      display: block;
     }
 
     .demo-output h3 {
@@ -566,6 +631,14 @@
     }
 
     @media (max-width: 900px) {
+      .nav-inner {
+        flex-wrap: wrap;
+      }
+
+      .nav-toggle {
+        display: grid;
+      }
+
       .hero-grid,
       .cta {
         grid-template-columns: 1fr;
@@ -581,7 +654,24 @@
       }
 
       .nav-links {
+        width: 100%;
         display: none;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+        padding: 14px 0 4px;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 10px 0;
+      }
+
+      .nav-links .button {
+        margin-top: 4px;
       }
     }
 
@@ -617,7 +707,12 @@
         </span>
         <span>Quote Heroes</span>
       </a>
-      <div class="nav-links">
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primaryNav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-links" id="primaryNav">
         <a href="#how">How it works</a>
         <a href="#services">Services</a>
         <a href="#contractors">For pros</a>
@@ -633,8 +728,8 @@
           <div class="eyebrow">⚡ Stop chasing contractors. Let quotes come to you.</div>
           <h1>One request. Multiple local quotes.</h1>
           <p>
-            Tell Quote Heroes what job you need done. Our smart quote builder creates the right questions,
-            sends the job packet to local businesses, and helps you compare the best offers in one place.
+            Tell Quote Heroes what job you need done. The request builder asks for the details contractors
+            need, then creates a clean job packet you can route to local businesses.
           </p>
           <div class="hero-actions">
             <a class="button" href="#quote">Start a Quote Request</a>
@@ -646,8 +741,8 @@
               <span>simple request form</span>
             </div>
             <div class="trust-item">
-              <strong>3-5</strong>
-              <span>local businesses contacted</span>
+              <strong>1</strong>
+              <span>contractor-ready packet</span>
             </div>
             <div class="trust-item">
               <strong>0</strong>
@@ -662,53 +757,56 @@
             <span class="badge">Fast request</span>
           </div>
 
-          <form id="quoteForm">
+          <form id="quoteForm" action="#" method="post">
             <label for="customerName">Customer Name</label>
-            <input id="customerName" type="text" placeholder="John Smith" required />
+            <input id="customerName" name="customerName" type="text" placeholder="John Smith" required />
 
             <label for="jobDescription">Job Description</label>
-            <textarea id="jobDescription" placeholder="Example: I need my driveway and back patio power washed. There is some red clay staining and I have an outdoor water hookup." required></textarea>
+            <textarea id="jobDescription" name="jobDescription" placeholder="Example: I need my driveway and back patio power washed. There is some red clay staining and I have an outdoor water hookup." required></textarea>
 
             <div class="field-row">
               <div>
                 <label for="phone">Phone</label>
-                <input id="phone" type="tel" placeholder="555-555-5555" required />
+                <input id="phone" name="phone" type="tel" placeholder="555-555-5555" required />
               </div>
               <div>
                 <label for="email">Email</label>
-                <input id="email" type="email" placeholder="you@example.com" />
+                <input id="email" name="email" type="email" placeholder="you@example.com" />
               </div>
             </div>
 
             <label for="streetAddress">Street Address</label>
-            <input id="streetAddress" type="text" placeholder="123 Main Street" />
+            <input id="streetAddress" name="streetAddress" type="text" placeholder="123 Main Street" />
 
             <div class="field-row">
               <div>
                 <label for="city">City</label>
-                <input id="city" type="text" placeholder="Angier" />
+                <input id="city" name="city" type="text" placeholder="Angier" />
               </div>
               <div>
                 <label for="zipCode">ZIP Code</label>
-                <input id="zipCode" type="text" placeholder="27501" required />
+                <input id="zipCode" name="zipCode" type="text" placeholder="27501" required />
               </div>
             </div>
 
             <div class="field-row">
               <div>
                 <label for="serviceType">Service Type</label>
-                <select id="serviceType" required>
+                <select id="serviceType" name="serviceType" required>
                   <option value="Power Washing">Power Washing</option>
                   <option value="Flooring">Flooring</option>
                   <option value="Painting">Painting</option>
                   <option value="Handyman">Handyman</option>
                   <option value="Landscaping">Landscaping</option>
+                  <option value="Plumbing">Plumbing</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Roofing">Roofing</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
               <div>
                 <label for="timeline">Timeline</label>
-                <select id="timeline" required>
+                <select id="timeline" name="timeline" required>
                   <option value="ASAP">ASAP</option>
                   <option value="This week">This week</option>
                   <option value="Within 2 weeks">Within 2 weeks</option>
@@ -717,33 +815,28 @@
               </div>
             </div>
 
-            <div class="field-row">
-              <div>
-                <label for="squareFeet">Square Feet</label>
-                <input id="squareFeet" type="number" min="0" step="1" placeholder="Example: 800" />
-              </div>
-              <div>
-                <label for="waterHookup">Water Hookup</label>
-                <select id="waterHookup">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                  <option value="Not sure">Not sure</option>
-                </select>
-              </div>
+            <div class="ai-panel" id="questionHint">
+              <strong>A few extra details</strong>
+              <p id="questionHintText">Power washing quotes are better with surface, size, and water access.</p>
             </div>
+            <div class="dynamic-fields" id="dynamicFields"></div>
 
-            <button class="button" type="submit" style="width:100%; margin-top:18px;">Submit Quote Request</button>
+            <label for="photos">Photos</label>
+            <input id="photos" name="photos" type="file" accept="image/*" multiple />
+            <p class="field-help">Optional. Add up to 5 photos that show the job area.</p>
+
+            <button class="button" id="submitButton" type="submit" style="width:100%; margin-top:18px;">Submit Quote Request</button>
+            <p class="submit-status" id="submitStatus" aria-live="polite"></p>
             <p class="tiny-note">
-              Date Submitted and Status are created automatically. New requests enter Airtable as “New Lead.”
+              Date Submitted and Status are created automatically. New requests are packaged as “New Lead.”
             </p>
           </form>
 
-          <div class="demo-output" id="demoOutput">
-            <h3>Request sent</h3>
+          <div class="demo-output" id="demoOutput" aria-live="polite">
+            <h3>Request packet ready</h3>
             <pre id="requestPreview"></pre>
             <button class="button secondary" id="copyButton" type="button" style="margin-top:14px;">Copy request packet</button>
           </div>
-        </div>
         </div>
       </div>
     </section>
@@ -767,8 +860,8 @@
           </div>
           <div class="step-card">
             <div class="icon">🏆</div>
-            <h3>3. Quotes come back</h3>
-            <p>The request is sent to trusted local businesses. The customer compares options without calling everyone.</p>
+            <h3>3. The packet is ready</h3>
+            <p>The request is formatted for local businesses so responses can be faster, cleaner, and easier to compare.</p>
           </div>
         </div>
       </div>
@@ -881,11 +974,11 @@
   <div class="success-modal-overlay" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
     <div class="success-modal">
       <div class="success-icon">✓</div>
-      <h2 id="successTitle">Nice! We’ve got your job request.</h2>
-      <p>
-        We’re going to send your request to local businesses for you now.
+      <h2 id="successTitle">Nice! Your request packet is ready.</h2>
+      <p id="successMessage">
+        The job details are packaged and ready for local businesses.
       </p>
-      <div class="modal-note">
+      <div class="modal-note" id="successNote">
         You can expect quotes to come in within 24 to 48 hours.
       </div>
       <p class="tiny-note">
@@ -902,55 +995,289 @@
   </footer>
 
   <script>
-    const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/nv8igv81el12c4u1vljrwgjukiwht6da";
+    const SUBMISSION_ENDPOINT = document.querySelector("meta[name='quoteheroes-submit-endpoint']")?.content.trim() || "";
+    const SERVICE_QUESTIONS = {
+      "Power Washing": {
+        hint: "Power washing quotes are better with surface, size, and water access.",
+        fields: [
+          { name: "surfaces", label: "Surfaces", type: "select", required: true, options: ["Driveway", "Patio or deck", "Siding", "Fence", "Multiple areas"] },
+          { name: "squareFeet", label: "Approx. square feet", type: "number", min: "0", step: "1", placeholder: "Example: 800" },
+          { name: "waterHookup", label: "Water hookup", type: "select", options: ["Yes", "No", "Not sure"] },
+          { name: "condition", label: "Main issue", type: "select", options: ["General cleaning", "Red clay staining", "Mold or mildew", "Oil stains", "Not sure"] }
+        ]
+      },
+      Flooring: {
+        hint: "Flooring quotes are better with material, rooms, size, and removal details.",
+        fields: [
+          { name: "flooringType", label: "Flooring type", type: "select", required: true, options: ["LVP", "Hardwood", "Tile", "Carpet", "Not sure"] },
+          { name: "squareFeet", label: "Approx. square feet", type: "number", min: "0", step: "1", placeholder: "Example: 600" },
+          { name: "rooms", label: "Rooms or areas", type: "text", placeholder: "Kitchen, hallway, two bedrooms" },
+          { name: "removeOldFlooring", label: "Remove old flooring", type: "select", options: ["Yes", "No", "Not sure"] }
+        ]
+      },
+      Painting: {
+        hint: "Painting quotes are better with area, room count, and paint details.",
+        fields: [
+          { name: "paintArea", label: "Paint area", type: "select", required: true, options: ["Interior", "Exterior", "Cabinets", "Trim", "Multiple areas"] },
+          { name: "rooms", label: "Rooms or areas", type: "text", placeholder: "Living room, hallway, exterior trim" },
+          { name: "paintSupplied", label: "Paint supplied", type: "select", options: ["Customer supplies paint", "Pro supplies paint", "Not sure"] },
+          { name: "wallCondition", label: "Wall condition", type: "select", options: ["Ready to paint", "Needs patching", "Needs sanding", "Not sure"] }
+        ]
+      },
+      Handyman: {
+        hint: "Handyman quotes are better with task list, materials, and urgency.",
+        fields: [
+          { name: "taskCount", label: "Number of tasks", type: "select", required: true, options: ["1 task", "2-3 tasks", "4+ tasks", "Not sure"] },
+          { name: "taskList", label: "Task list", type: "textarea", placeholder: "Mount TV, fix door, patch drywall" },
+          { name: "materialsReady", label: "Materials ready", type: "select", options: ["Yes", "No", "Some materials", "Not sure"] }
+        ]
+      },
+      Landscaping: {
+        hint: "Landscaping quotes are better with service type, yard size, and frequency.",
+        fields: [
+          { name: "serviceNeeded", label: "Service needed", type: "select", required: true, options: ["Mulch", "Cleanup", "Trimming", "Planting", "Grading", "Lawn work"] },
+          { name: "yardSize", label: "Yard size", type: "select", options: ["Small", "Medium", "Large", "Not sure"] },
+          { name: "recurring", label: "Recurring service", type: "select", options: ["One-time", "Weekly", "Biweekly", "Monthly", "Not sure"] }
+        ]
+      },
+      Plumbing: {
+        hint: "Plumbing quotes are better with fixture type, issue, and access details.",
+        fields: [
+          { name: "issueType", label: "Issue type", type: "select", required: true, options: ["Leak", "Fixture install", "Toilet", "Drain", "Water heater", "Other"] },
+          { name: "fixtureLocation", label: "Location", type: "text", placeholder: "Kitchen sink, upstairs bathroom" },
+          { name: "shutoffAvailable", label: "Water shutoff available", type: "select", options: ["Yes", "No", "Not sure"] }
+        ]
+      },
+      Electrical: {
+        hint: "Electrical quotes are better with fixture type, quantity, and access details.",
+        fields: [
+          { name: "workType", label: "Work type", type: "select", required: true, options: ["Fan", "Light", "Outlet", "Switch", "Panel", "Troubleshooting"] },
+          { name: "quantity", label: "Quantity", type: "number", min: "1", step: "1", placeholder: "Example: 3" },
+          { name: "existingWiring", label: "Existing wiring", type: "select", options: ["Yes", "No", "Not sure"] }
+        ]
+      },
+      Roofing: {
+        hint: "Roofing quotes are better with roof type, issue, and urgency.",
+        fields: [
+          { name: "roofIssue", label: "Roof issue", type: "select", required: true, options: ["Leak", "Missing shingles", "Gutters", "Inspection", "Flashing", "Not sure"] },
+          { name: "roofType", label: "Roof type", type: "select", options: ["Shingle", "Metal", "Flat", "Not sure"] },
+          { name: "activeLeak", label: "Active leak", type: "select", options: ["Yes", "No", "Not sure"] }
+        ]
+      },
+      Other: {
+        hint: "Add a few details that would help a local business understand the job.",
+        fields: [
+          { name: "projectType", label: "Project type", type: "text", required: true, placeholder: "Example: garage shelves" },
+          { name: "projectDetails", label: "Extra details", type: "textarea", placeholder: "Share measurements, materials, access notes, or constraints" }
+        ]
+      }
+    };
 
+    const navToggle = document.getElementById("navToggle");
+    const primaryNav = document.getElementById("primaryNav");
     const quoteForm = document.getElementById("quoteForm");
+    const serviceType = document.getElementById("serviceType");
+    const dynamicFields = document.getElementById("dynamicFields");
+    const questionHintText = document.getElementById("questionHintText");
+    const photosInput = document.getElementById("photos");
+    const submitButton = document.getElementById("submitButton");
+    const submitStatus = document.getElementById("submitStatus");
     const demoOutput = document.getElementById("demoOutput");
     const requestPreview = document.getElementById("requestPreview");
     const copyButton = document.getElementById("copyButton");
     const successModal = document.getElementById("successModal");
+    const successTitle = document.getElementById("successTitle");
+    const successMessage = document.getElementById("successMessage");
+    const successNote = document.getElementById("successNote");
     const closeSuccessModal = document.getElementById("closeSuccessModal");
+
+    const escapeHtml = value => String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+
+    const getFieldId = field => `detail_${field.name}`;
+
+    function renderField(field) {
+      const id = getFieldId(field);
+      const required = field.required ? " required" : "";
+      const placeholder = field.placeholder ? ` placeholder="${escapeHtml(field.placeholder)}"` : "";
+      const min = field.min ? ` min="${escapeHtml(field.min)}"` : "";
+      const step = field.step ? ` step="${escapeHtml(field.step)}"` : "";
+
+      if (field.type === "select") {
+        const options = field.options.map(option => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join("");
+        return `
+          <div>
+            <label for="${id}">${escapeHtml(field.label)}</label>
+            <select id="${id}" name="${id}"${required}>${options}</select>
+          </div>
+        `;
+      }
+
+      if (field.type === "textarea") {
+        return `
+          <div>
+            <label for="${id}">${escapeHtml(field.label)}</label>
+            <textarea id="${id}" name="${id}"${placeholder}${required}></textarea>
+          </div>
+        `;
+      }
+
+      return `
+        <div>
+          <label for="${id}">${escapeHtml(field.label)}</label>
+          <input id="${id}" name="${id}" type="${escapeHtml(field.type)}"${placeholder}${min}${step}${required} />
+        </div>
+      `;
+    }
+
+    function renderServiceFields() {
+      const config = SERVICE_QUESTIONS[serviceType.value] || SERVICE_QUESTIONS.Other;
+      questionHintText.textContent = config.hint;
+      dynamicFields.innerHTML = config.fields.map(renderField).join("");
+    }
+
+    function getDynamicDetails(formData) {
+      const config = SERVICE_QUESTIONS[serviceType.value] || SERVICE_QUESTIONS.Other;
+      const labelByName = Object.fromEntries(config.fields.map(field => [field.name, field.label]));
+      const details = {};
+
+      for (const [key, value] of formData.entries()) {
+        if (!key.startsWith("detail_") || value instanceof File || value === "") {
+          continue;
+        }
+        const detailName = key.replace("detail_", "");
+        details[labelByName[detailName] || detailName] = value;
+      }
+
+      return details;
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({
+          fileName: file.name,
+          contentType: file.type,
+          sizeBytes: file.size,
+          dataUrl: reader.result
+        });
+        reader.onerror = () => resolve({
+          fileName: file.name,
+          contentType: file.type,
+          sizeBytes: file.size,
+          readError: true
+        });
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function getPhotoPayload() {
+      const files = Array.from(photosInput.files || []).slice(0, 5);
+      return Promise.all(files.map(readFileAsDataUrl));
+    }
+
+    function getPreviewPayload(leadData) {
+      return {
+        ...leadData,
+        photos: leadData.photos.map(({ dataUrl, ...photo }) => photo)
+      };
+    }
+
+    function setSubmitting(isSubmitting, message = "") {
+      submitButton.disabled = isSubmitting;
+      submitButton.textContent = isSubmitting ? "Preparing Request..." : "Submit Quote Request";
+      submitStatus.textContent = message;
+    }
+
+    function showSuccessModal({ title, message, note }) {
+      successTitle.textContent = title;
+      successMessage.textContent = message;
+      successNote.textContent = note;
+      successModal.classList.add("show");
+    }
+
+    navToggle.addEventListener("click", () => {
+      const expanded = navToggle.getAttribute("aria-expanded") === "true";
+      navToggle.setAttribute("aria-expanded", String(!expanded));
+      navToggle.setAttribute("aria-label", expanded ? "Open navigation" : "Close navigation");
+      primaryNav.classList.toggle("open", !expanded);
+    });
+
+    primaryNav.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        navToggle.setAttribute("aria-expanded", "false");
+        navToggle.setAttribute("aria-label", "Open navigation");
+        primaryNav.classList.remove("open");
+      });
+    });
+
+    serviceType.addEventListener("change", renderServiceFields);
+    renderServiceFields();
 
     quoteForm.addEventListener("submit", async event => {
       event.preventDefault();
+      setSubmitting(true, "Preparing request packet...");
+
+      const formData = new FormData(quoteForm);
+      const photos = await getPhotoPayload();
 
       const leadData = {
-        customerName: document.getElementById("customerName").value,
+        customerName: formData.get("customerName"),
         dateSubmitted: new Date().toISOString(),
         status: "New Lead",
-        jobDescription: document.getElementById("jobDescription").value,
-        phone: document.getElementById("phone").value,
-        email: document.getElementById("email").value,
-        streetAddress: document.getElementById("streetAddress").value,
-        city: document.getElementById("city").value,
-        zipCode: document.getElementById("zipCode").value,
-        serviceType: document.getElementById("serviceType").value,
-        timeline: document.getElementById("timeline").value,
-        squareFeet: document.getElementById("squareFeet").value ? Number(document.getElementById("squareFeet").value) : "",
-        waterHookup: document.getElementById("waterHookup").value
+        jobDescription: formData.get("jobDescription"),
+        phone: formData.get("phone"),
+        email: formData.get("email"),
+        streetAddress: formData.get("streetAddress"),
+        city: formData.get("city"),
+        zipCode: formData.get("zipCode"),
+        serviceType: formData.get("serviceType"),
+        timeline: formData.get("timeline"),
+        details: getDynamicDetails(formData),
+        photos
       };
 
-      requestPreview.textContent = JSON.stringify(leadData, null, 2);
-      demoOutput.style.display = "none";
+      requestPreview.textContent = JSON.stringify(getPreviewPayload(leadData), null, 2);
+      demoOutput.classList.add("show");
 
       try {
-        const response = await fetch(MAKE_WEBHOOK_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(leadData)
-        });
+        if (SUBMISSION_ENDPOINT) {
+          setSubmitting(true, "Sending request...");
+          const response = await fetch(SUBMISSION_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(leadData)
+          });
 
-        if (!response.ok) {
-          throw new Error("Make webhook did not return a successful response.");
+          if (!response.ok) {
+            throw new Error("The quote endpoint did not return a successful response.");
+          }
+
+          showSuccessModal({
+            title: "Nice! We've sent your job request.",
+            message: "The job details were sent to the quote queue.",
+            note: "You can expect quotes to come in within 24 to 48 hours."
+          });
+          setSubmitting(false, "Request sent.");
+        } else {
+          showSuccessModal({
+            title: "Nice! Your request packet is ready.",
+            message: "The job details are packaged and ready for local businesses.",
+            note: "Use the packet below to route this lead."
+          });
+          setSubmitting(false, "Packet ready.");
         }
 
-        successModal.classList.add("show");
         quoteForm.reset();
+        renderServiceFields();
       } catch (error) {
         console.error(error);
-        alert("The request was created on the page, but it did not send to Airtable. Check Make and try again.");
+        setSubmitting(false, "Packet ready, but sending failed. Copy the packet below or try again.");
       }
     });
 
@@ -960,6 +1287,12 @@
 
     successModal.addEventListener("click", event => {
       if (event.target === successModal) {
+        successModal.classList.remove("show");
+      }
+    });
+
+    window.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
         successModal.classList.remove("show");
       }
     });

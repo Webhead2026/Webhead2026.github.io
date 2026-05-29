@@ -22,4 +22,6 @@ https://webhead2026.github.io
 
 ## Important security note
 
-The current `index.html` includes a public Make webhook URL. That means anyone who views the page source can see the webhook and potentially submit data to it. For a quick MVP this may be acceptable, but for a real production site you should route form submissions through a backend/serverless function or rotate/protect the webhook.
+Do not paste a Make webhook directly into the page. Anyone who views the page source can see client-side URLs and potentially submit data to them.
+
+For production, route form submissions through a backend or serverless function, then put that protected endpoint in the `quoteheroes-submit-endpoint` meta tag in `index.html`.
