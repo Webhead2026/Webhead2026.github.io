@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quote Heroes | Get Local Quotes Fast</title>
+  <style>
+    :root {
+      --navy: #0f172a;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --gold: #f59e0b;
+      --green: #10b981;
+      --gray: #64748b;
+      --light: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--light);
+      color: var(--navy);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+    }
+
+    .nav {
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--blue), var(--gold));
+      color: white;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
+    }
+
+    .clock-logo {
+      width: 32px;
+      height: 32px;
+      overflow: visible;
+    }
+
+    .clock-face,
+    .clock-hand,
+    .q-tail {
+      fill: none;
+      stroke: white;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .clock-face {
+      stroke-width: 7;
+    }
+
+    .clock-hand {
+      stroke-width: 5;
+    }
+
+    .q-tail {
+      stroke-width: 8;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-weight: 700;
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--blue);
+      color: white;
+      padding: 13px 20px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28);
+      transition: 0.2s ease;
+    }
+
+    .button:hover {
+      background: var(--blue-dark);
+      transform: translateY(-1px);
+    }
+
+    .button.secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.22), transparent 26%),
+        radial-gradient(circle at 85% 10%, rgba(37, 99, 235, 0.25), transparent 28%),
+        linear-gradient(135deg, #0f172a 0%, #172554 58%, #1e3a8a 100%);
+      color: white;
+      padding: 84px 0 70px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      color: #dbeafe;
+      margin-bottom: 20px;
+      font-size: 0.92rem;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 5.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.075em;
+      margin-bottom: 22px;
+    }
+
+    .hero p {
+      font-size: 1.18rem;
+      color: #dbeafe;
+      max-width: 650px;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 590px;
+    }
+
+    .trust-item {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .trust-item strong {
+      display: block;
+      font-size: 1.4rem;
+      color: white;
+      line-height: 1.1;
+    }
+
+    .trust-item span {
+      color: #cbd5e1;
+      font-size: 0.88rem;
+    }
+
+    .quote-card {
+      background: white;
+      color: var(--navy);
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .quote-card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.75), rgba(37, 99, 235, 0.75));
+      z-index: -1;
+    }
+
+    .form-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .form-title h2 {
+      font-size: 1.55rem;
+      letter-spacing: -0.04em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #047857;
+      padding: 7px 10px;
+      font-weight: 900;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    label {
+      display: block;
+      font-weight: 850;
+      margin: 15px 0 7px;
+      color: #1e293b;
+      font-size: 0.93rem;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+      background: white;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .ai-panel {
+      margin: 18px 0 8px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .ai-panel strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #1e40af;
+    }
+
+    .ai-panel p {
+      color: #334155;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .dynamic-fields {
+      display: grid;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .section {
+      padding: 78px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 38px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      margin-bottom: 14px;
+    }
+
+    .section-header p {
+      color: var(--gray);
+      font-size: 1.08rem;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .step-card,
+    .service-card,
+    .contractor-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+
+    .step-card h3,
+    .service-card h3,
+    .contractor-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      letter-spacing: -0.035em;
+    }
+
+    .step-card p,
+    .service-card p,
+    .contractor-card p {
+      color: var(--gray);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .service-card {
+      padding: 20px;
+    }
+
+    .service-card .icon {
+      width: 42px;
+      height: 42px;
+      font-size: 1.2rem;
+      margin-bottom: 14px;
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .demo-output {
+      display: none;
+      margin-top: 22px;
+      border-radius: 20px;
+      background: #0f172a;
+      color: white;
+      padding: 18px;
+    }
+
+    .demo-output h3 {
+      margin-bottom: 8px;
+    }
+
+    .demo-output pre {
+      white-space: pre-wrap;
+      color: #cbd5e1;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.9rem;
+    }
+
+    .contractor-section {
+      background: white;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .contractor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 6px 9px;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .cta {
+      background: linear-gradient(135deg, var(--blue), #1e40af);
+      color: white;
+      border-radius: 32px;
+      padding: 46px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin-bottom: 12px;
+    }
+
+    .cta p {
+      color: #dbeafe;
+      font-size: 1.05rem;
+    }
+
+    footer {
+      padding: 34px 0;
+      color: #64748b;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .tiny-note {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-top: 10px;
+    }
+
+    .success-modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .success-modal-overlay.show {
+      display: flex;
+    }
+
+    .success-modal {
+      width: min(560px, 100%);
+      background: white;
+      color: var(--navy);
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: 0 30px 90px rgba(15, 23, 42, 0.35);
+      text-align: center;
+      animation: modalPop 0.22s ease-out;
+    }
+
+    .success-icon {
+      width: 66px;
+      height: 66px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      color: white;
+      font-size: 2rem;
+      font-weight: 900;
+      box-shadow: 0 14px 32px rgba(16, 185, 129, 0.28);
+    }
+
+    .success-modal h2 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin-bottom: 14px;
+    }
+
+    .success-modal p {
+      color: #475569;
+      font-size: 1.02rem;
+      margin-bottom: 12px;
+    }
+
+    .success-modal .modal-note {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      padding: 14px;
+      margin: 18px 0 22px;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    @keyframes modalPop {
+      from { transform: translateY(10px) scale(0.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .cta {
+        grid-template-columns: 1fr;
+      }
+
+      .steps,
+      .contractor-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .field-row,
+      .trust-row,
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 56px;
+      }
+
+      .quote-card,
+      .cta {
+        padding: 22px;
+        border-radius: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand" aria-label="Quote Heroes Home">
+        <span class="logo" aria-hidden="true">
+          <svg class="clock-logo" viewBox="0 0 64 64" role="img">
+            <circle class="clock-face" cx="30" cy="30" r="19"></circle>
+            <path class="clock-hand" d="M30 18v13l9 6"></path>
+            <path class="q-tail" d="M43 43l10 10"></path>
+          </svg>
+        </span>
+        <span>Quote Heroes</span>
+      </a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#services">Services</a>
+        <a href="#contractors">For pros</a>
+        <a href="#quote" class="button">Get Quotes</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">⚡ Stop chasing contractors. Let quotes come to you.</div>
+          <h1>One request. Multiple local quotes.</h1>
+          <p>
+            Tell Quote Heroes what job you need done. Our smart quote builder creates the right questions,
+            sends the job packet to local businesses, and helps you compare the best offers in one place.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#quote">Start a Quote Request</a>
+            <a class="button secondary" href="#how">See How It Works</a>
+          </div>
+          <div class="trust-row">
+            <div class="trust-item">
+              <strong>1</strong>
+              <span>simple request form</span>
+            </div>
+            <div class="trust-item">
+              <strong>3-5</strong>
+              <span>local businesses contacted</span>
+            </div>
+            <div class="trust-item">
+              <strong>0</strong>
+              <span>awkward quote chasing</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="quote" class="quote-card">
+          <div class="form-title">
+            <h2>Submit a quote request</h2>
+            <span class="badge">Fast request</span>
+          </div>
+
+          <form id="quoteForm">
+            <label for="customerName">Customer Name</label>
+            <input id="customerName" type="text" placeholder="John Smith" required />
+
+            <label for="jobDescription">Job Description</label>
+            <textarea id="jobDescription" placeholder="Example: I need my driveway and back patio power washed. There is some red clay staining and I have an outdoor water hookup." required></textarea>
+
+            <div class="field-row">
+              <div>
+                <label for="phone">Phone</label>
+                <input id="phone" type="tel" placeholder="555-555-5555" required />
+              </div>
+              <div>
+                <label for="email">Email</label>
+                <input id="email" type="email" placeholder="you@example.com" />
+              </div>
+            </div>
+
+            <label for="streetAddress">Street Address</label>
+            <input id="streetAddress" type="text" placeholder="123 Main Street" />
+
+            <div class="field-row">
+              <div>
+                <label for="city">City</label>
+                <input id="city" type="text" placeholder="Angier" />
+              </div>
+              <div>
+                <label for="zipCode">ZIP Code</label>
+                <input id="zipCode" type="text" placeholder="27501" required />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div>
+                <label for="serviceType">Service Type</label>
+                <select id="serviceType" required>
+                  <option value="Power Washing">Power Washing</option>
+                  <option value="Flooring">Flooring</option>
+                  <option value="Painting">Painting</option>
+                  <option value="Handyman">Handyman</option>
+                  <option value="Landscaping">Landscaping</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="timeline">Timeline</label>
+                <select id="timeline" required>
+                  <option value="ASAP">ASAP</option>
+                  <option value="This week">This week</option>
+                  <option value="Within 2 weeks">Within 2 weeks</option>
+                  <option value="This month">This month</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div>
+                <label for="squareFeet">Square Feet</label>
+                <input id="squareFeet" type="number" min="0" step="1" placeholder="Example: 800" />
+              </div>
+              <div>
+                <label for="waterHookup">Water Hookup</label>
+                <select id="waterHookup">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                  <option value="Not sure">Not sure</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="button" type="submit" style="width:100%; margin-top:18px;">Submit Quote Request</button>
+            <p class="tiny-note">
+              Date Submitted and Status are created automatically. New requests enter Airtable as “New Lead.”
+            </p>
+          </form>
+
+          <div class="demo-output" id="demoOutput">
+            <h3>Request sent</h3>
+            <pre id="requestPreview"></pre>
+            <button class="button secondary" id="copyButton" type="button" style="margin-top:14px;">Copy request packet</button>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-header">
+          <h2>How Quote Heroes works</h2>
+          <p>Customers get cleaner quote requests. Businesses get better leads. You sit in the middle and make the process easier.</p>
+        </div>
+        <div class="steps">
+          <div class="step-card">
+            <div class="icon">📝</div>
+            <h3>1. Customer describes the job</h3>
+            <p>They type what they need, their ZIP code, timeline, and basic contact info.</p>
+          </div>
+          <div class="step-card">
+            <div class="icon">🤖</div>
+            <h3>2. Smart questions appear</h3>
+            <p>The site detects the job type and asks for details contractors actually need to quote accurately.</p>
+          </div>
+          <div class="step-card">
+            <div class="icon">🏆</div>
+            <h3>3. Quotes come back</h3>
+            <p>The request is sent to trusted local businesses. The customer compares options without calling everyone.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="services">
+      <div class="container">
+        <div class="section-header">
+          <h2>Built for local home projects</h2>
+          <p>Start with a few service categories, then expand as you add more businesses to your network.</p>
+        </div>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="icon">💦</div>
+            <h3>Power washing</h3>
+            <p>Driveways, siding, patios, decks, fences, and concrete.</p>
+          </div>
+          <div class="service-card">
+            <div class="icon">🪵</div>
+            <h3>Flooring</h3>
+            <p>LVP, hardwood, tile, carpet removal, and install projects.</p>
+          </div>
+          <div class="service-card">
+            <div class="icon">🎨</div>
+            <h3>Painting</h3>
+            <p>Interior rooms, exterior touch-ups, trim, cabinets, and walls.</p>
+          </div>
+          <div class="service-card">
+            <div class="icon">🔨</div>
+            <h3>Handyman</h3>
+            <p>Repairs, mounting, assembly, doors, drywall, and small projects.</p>
+          </div>
+          <div class="service-card">
+            <div class="icon">🌿</div>
+            <h3>Landscaping</h3>
+            <p>Mulch, cleanup, trimming, planting, grading, and lawn work.</p>
+          </div>
+          <div class="service-card">
+            <div class="icon">🚿</div>
+            <h3>Plumbing</h3>
+            <p>Leaks, fixtures, toilets, drains, water heaters, and repairs.</p>
+          </div>
+          <div class="service-card">
+            <div class="icon">⚡</div>
+            <h3>Electrical</h3>
+            <p>Fans, lights, outlets, switches, panels, and troubleshooting.</p>
+          </div>
+          <div class="service-card">
+            <div class="icon">🏠</div>
+            <h3>Roofing</h3>
+            <p>Repairs, inspections, gutters, shingles, flashing, and leaks.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contractor-section" id="contractors">
+      <div class="container">
+        <div class="section-header">
+          <h2>For local businesses</h2>
+          <p>Quote Heroes sends cleaner leads with the information pros need before they waste time driving out blind.</p>
+        </div>
+        <div class="contractor-grid">
+          <div class="contractor-card">
+            <h3>Better lead quality</h3>
+            <p>Customers answer job-specific questions before the business receives the request.</p>
+            <div class="pill-row">
+              <span class="pill">Photos</span>
+              <span class="pill">Scope</span>
+              <span class="pill">Timeline</span>
+            </div>
+          </div>
+          <div class="contractor-card">
+            <h3>Faster quoting</h3>
+            <p>Businesses can respond with rough estimates, schedule inspections, or decline poor-fit jobs quickly.</p>
+            <div class="pill-row">
+              <span class="pill">Fast replies</span>
+              <span class="pill">Less chasing</span>
+            </div>
+          </div>
+          <div class="contractor-card">
+            <h3>Simple monetization</h3>
+            <p>You can charge per accepted lead, per booked job, or monthly for access to quote requests.</p>
+            <div class="pill-row">
+              <span class="pill">Pay per lead</span>
+              <span class="pill">Subscription</span>
+              <span class="pill">Commission</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <div>
+            <h2>Start as the quote middleman in one city.</h2>
+            <p>
+              Build supply first: recruit a few power washing, handyman, flooring, painting, and landscaping businesses.
+              Then drive customers to one simple quote request page.
+            </p>
+          </div>
+          <a href="#quote" class="button secondary">Try the Demo Form</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="success-modal-overlay" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="success-modal">
+      <div class="success-icon">✓</div>
+      <h2 id="successTitle">Nice! We’ve got your job request.</h2>
+      <p>
+        We’re going to send your request to local businesses for you now.
+      </p>
+      <div class="modal-note">
+        You can expect quotes to come in within 24 to 48 hours.
+      </div>
+      <p class="tiny-note">
+        Timing can vary depending on how quickly businesses get back to us.
+      </p>
+      <button class="button" id="closeSuccessModal" type="button" style="width:100%; margin-top:18px;">Sounds good</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      © <span id="year"></span> Quote Heroes. Local quotes without the runaround.
+    </div>
+  </footer>
+
+  <script>
+    const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/nv8igv81el12c4u1vljrwgjukiwht6da";
+
+    const quoteForm = document.getElementById("quoteForm");
+    const demoOutput = document.getElementById("demoOutput");
+    const requestPreview = document.getElementById("requestPreview");
+    const copyButton = document.getElementById("copyButton");
+    const successModal = document.getElementById("successModal");
+    const closeSuccessModal = document.getElementById("closeSuccessModal");
+
+    quoteForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const leadData = {
+        customerName: document.getElementById("customerName").value,
+        dateSubmitted: new Date().toISOString(),
+        status: "New Lead",
+        jobDescription: document.getElementById("jobDescription").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        streetAddress: document.getElementById("streetAddress").value,
+        city: document.getElementById("city").value,
+        zipCode: document.getElementById("zipCode").value,
+        serviceType: document.getElementById("serviceType").value,
+        timeline: document.getElementById("timeline").value,
+        squareFeet: document.getElementById("squareFeet").value ? Number(document.getElementById("squareFeet").value) : "",
+        waterHookup: document.getElementById("waterHookup").value
+      };
+
+      requestPreview.textContent = JSON.stringify(leadData, null, 2);
+      demoOutput.style.display = "none";
+
+      try {
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(leadData)
+        });
+
+        if (!response.ok) {
+          throw new Error("Make webhook did not return a successful response.");
+        }
+
+        successModal.classList.add("show");
+        quoteForm.reset();
+      } catch (error) {
+        console.error(error);
+        alert("The request was created on the page, but it did not send to Airtable. Check Make and try again.");
+      }
+    });
+
+    closeSuccessModal.addEventListener("click", () => {
+      successModal.classList.remove("show");
+    });
+
+    successModal.addEventListener("click", event => {
+      if (event.target === successModal) {
+        successModal.classList.remove("show");
+      }
+    });
+
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(requestPreview.textContent);
+        copyButton.textContent = "Copied!";
+        setTimeout(() => copyButton.textContent = "Copy request packet", 1600);
+      } catch (error) {
+        alert("Copy failed. Highlight the packet and copy it manually.");
+      }
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
