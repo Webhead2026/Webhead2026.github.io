@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="quoteheroes-submit-endpoint" content="" />
+  <meta name="quoteheroes-submit-endpoint" content="https://quote-heroes-leads.henderson7grant.workers.dev/" />
   <title>Quote Heroes | Get Local Quotes Fast</title>
   <style>
     :root {
@@ -387,6 +387,15 @@
       min-height: 1.4em;
       font-weight: 800;
       color: #1e40af;
+    }
+
+    .hp-field {
+      position: absolute;
+      left: -10000px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
     }
 
     .section {
@@ -823,7 +832,12 @@
 
             <label for="photos">Photos</label>
             <input id="photos" name="photos" type="file" accept="image/*" multiple />
-            <p class="field-help">Optional. Add up to 5 photos that show the job area.</p>
+            <p class="field-help">Optional. Add up to 5 photos, 5 MB each, that show the job area.</p>
+
+            <div class="hp-field" aria-hidden="true">
+              <label for="companyWebsite">Company Website</label>
+              <input id="companyWebsite" name="companyWebsite" type="text" tabindex="-1" autocomplete="off" />
+            </div>
 
             <button class="button" id="submitButton" type="submit" style="width:100%; margin-top:18px;">Submit Quote Request</button>
             <p class="submit-status" id="submitStatus" aria-live="polite"></p>
@@ -1176,12 +1190,17 @@
 
     async function getPhotoPayload() {
       const files = Array.from(photosInput.files || []).slice(0, 5);
+      const oversized = files.find(file => file.size > 5 * 1024 * 1024);
+      if (oversized) {
+        throw new Error(`${oversized.name} is larger than 5 MB. Please choose a smaller photo.`);
+      }
       return Promise.all(files.map(readFileAsDataUrl));
     }
 
     function getPreviewPayload(leadData) {
+      const { companyWebsite, ...previewData } = leadData;
       return {
-        ...leadData,
+        ...previewData,
         photos: leadData.photos.map(({ dataUrl, ...photo }) => photo)
       };
     }
@@ -1222,7 +1241,13 @@
       setSubmitting(true, "Preparing request packet...");
 
       const formData = new FormData(quoteForm);
-      const photos = await getPhotoPayload();
+      let photos = [];
+      try {
+        photos = await getPhotoPayload();
+      } catch (error) {
+        setSubmitting(false, error.message);
+        return;
+      }
 
       const leadData = {
         customerName: formData.get("customerName"),
@@ -1237,7 +1262,8 @@
         serviceType: formData.get("serviceType"),
         timeline: formData.get("timeline"),
         details: getDynamicDetails(formData),
-        photos
+        photos,
+        companyWebsite: formData.get("companyWebsite")
       };
 
       requestPreview.textContent = JSON.stringify(getPreviewPayload(leadData), null, 2);
@@ -1277,7 +1303,7 @@
         renderServiceFields();
       } catch (error) {
         console.error(error);
-        setSubmitting(false, "Packet ready, but sending failed. Copy the packet below or try again.");
+        setSubmitting(false, error.message || "Packet ready, but sending failed. Copy the packet below or try again.");
       }
     });
 
