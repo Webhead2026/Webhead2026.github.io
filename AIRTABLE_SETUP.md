@@ -28,6 +28,8 @@ Add these fields with these exact names:
 | Photos | Attachment |
 | Source | Single line text |
 
+The website also asks for `Budget Range`. It is saved inside the `Details` field so the current Worker keeps working without another Airtable column change.
+
 Suggested `Status` options:
 
 - New Lead
