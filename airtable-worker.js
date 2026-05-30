@@ -61,6 +61,7 @@ function toAirtableFields(lead) {
     "City": cleanText(lead.city),
     "ZIP Code": cleanText(lead.zipCode),
     "Service Type": cleanText(lead.serviceType),
+    "Budget Range": cleanText(lead.budgetRange),
     "Timeline": cleanText(lead.timeline),
     "Job Description": cleanText(lead.jobDescription),
     "Details": JSON.stringify(lead.details || {}, null, 2),

@@ -21,6 +21,7 @@ Add these fields with these exact names:
 | City | Single line text |
 | ZIP Code | Single line text |
 | Service Type | Single select |
+| Budget Range | Single select |
 | Timeline | Single select |
 | Job Description | Long text |
 | Details | Long text |
@@ -28,7 +29,13 @@ Add these fields with these exact names:
 | Photos | Attachment |
 | Source | Single line text |
 
-The website also asks for `Budget Range`. It is saved inside the `Details` field so the current Worker keeps working without another Airtable column change.
+Suggested `Budget Range` options:
+
+- Not sure yet
+- Under $500
+- $500 - $1,500
+- $1,500 - $5,000
+- $5,000+
 
 Suggested `Status` options:
 
