@@ -488,30 +488,6 @@
       color: #c2410c;
     }
 
-    .demo-output {
-      display: none;
-      margin-top: 22px;
-      border-radius: 20px;
-      background: #0f172a;
-      color: white;
-      padding: 18px;
-    }
-
-    .demo-output.show {
-      display: block;
-    }
-
-    .demo-output h3 {
-      margin-bottom: 8px;
-    }
-
-    .demo-output pre {
-      white-space: pre-wrap;
-      color: #cbd5e1;
-      font-family: Consolas, Monaco, monospace;
-      font-size: 0.9rem;
-    }
-
     .contractor-section {
       background: white;
       border-top: 1px solid var(--border);
@@ -745,7 +721,7 @@
           <h1>One request. Multiple local quotes.</h1>
           <p>
             Tell Quote Heroes what job you need done. The request builder asks for the details contractors
-            need, then creates a clean job packet you can route to local businesses.
+            need, then sends a clean request to local businesses.
           </p>
           <div class="hero-actions">
             <a class="button" href="#quote">Start a Quote Request</a>
@@ -758,7 +734,7 @@
             </div>
             <div class="trust-item">
               <strong>1</strong>
-              <span>contractor-ready packet</span>
+              <span>contractor-ready request</span>
             </div>
             <div class="trust-item">
               <strong>0</strong>
@@ -867,11 +843,6 @@
             </p>
           </form>
 
-          <div class="demo-output" id="demoOutput" aria-live="polite">
-            <h3>Request packet ready</h3>
-            <pre id="requestPreview"></pre>
-            <button class="button secondary" id="copyButton" type="button" style="margin-top:14px;">Copy request packet</button>
-          </div>
         </div>
       </div>
     </section>
@@ -895,7 +866,7 @@
           </div>
           <div class="step-card">
             <div class="icon">🏆</div>
-            <h3>3. The packet is ready</h3>
+            <h3>3. The request is ready</h3>
             <p>The request is formatted for local businesses so responses can be faster, cleaner, and easier to compare.</p>
           </div>
         </div>
@@ -1009,9 +980,9 @@
   <div class="success-modal-overlay" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
     <div class="success-modal">
       <div class="success-icon">✓</div>
-      <h2 id="successTitle">Nice! Your request packet is ready.</h2>
+      <h2 id="successTitle">Nice! We've got your job request.</h2>
       <p id="successMessage">
-        The job details are packaged and ready for local businesses.
+        We'll review the details and send your request to local businesses.
       </p>
       <div class="modal-note" id="successNote">
         You can expect quotes to come in within 24 to 48 hours.
@@ -1129,9 +1100,6 @@
     const photosInput = document.getElementById("photos");
     const submitButton = document.getElementById("submitButton");
     const submitStatus = document.getElementById("submitStatus");
-    const demoOutput = document.getElementById("demoOutput");
-    const requestPreview = document.getElementById("requestPreview");
-    const copyButton = document.getElementById("copyButton");
     const successModal = document.getElementById("successModal");
     const successTitle = document.getElementById("successTitle");
     const successMessage = document.getElementById("successMessage");
@@ -1231,13 +1199,6 @@
       return Promise.all(files.map(readFileAsDataUrl));
     }
 
-    function getPreviewPayload(leadData) {
-      return {
-        ...leadData,
-        photos: leadData.photos.map(({ dataUrl, ...photo }) => photo)
-      };
-    }
-
     function setSubmitting(isSubmitting, message = "") {
       submitButton.disabled = isSubmitting;
       submitButton.textContent = isSubmitting ? "Preparing Request..." : "Submit Quote Request";
@@ -1271,7 +1232,7 @@
 
     quoteForm.addEventListener("submit", async event => {
       event.preventDefault();
-      setSubmitting(true, "Preparing request packet...");
+      setSubmitting(true, "Preparing request...");
 
       const formData = new FormData(quoteForm);
       let photos = [];
@@ -1301,9 +1262,6 @@
         photos
       };
 
-      requestPreview.textContent = JSON.stringify(getPreviewPayload(leadData), null, 2);
-      demoOutput.classList.add("show");
-
       try {
         if (SUBMISSION_ENDPOINT) {
           setSubmitting(true, "Sending request...");
@@ -1327,18 +1285,18 @@
           setSubmitting(false, "Request sent.");
         } else {
           showSuccessModal({
-            title: "Nice! Your request packet is ready.",
-            message: "The job details are packaged and ready for local businesses.",
-            note: "Use the packet below to route this lead."
+            title: "Nice! We've got your job request.",
+            message: "We'll review the details and send your request to local businesses.",
+            note: "You can expect quotes to come in within 24 to 48 hours."
           });
-          setSubmitting(false, "Packet ready.");
+          setSubmitting(false, "Request ready.");
         }
 
         quoteForm.reset();
         renderServiceFields();
       } catch (error) {
         console.error(error);
-        setSubmitting(false, error.message || "Packet ready, but sending failed. Copy the packet below or try again.");
+        setSubmitting(false, error.message || "Something went wrong. Please try submitting again.");
       }
     });
 
@@ -1355,16 +1313,6 @@
     window.addEventListener("keydown", event => {
       if (event.key === "Escape") {
         successModal.classList.remove("show");
-      }
-    });
-
-    copyButton.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(requestPreview.textContent);
-        copyButton.textContent = "Copied!";
-        setTimeout(() => copyButton.textContent = "Copy request packet", 1600);
-      } catch (error) {
-        alert("Copy failed. Highlight the packet and copy it manually.");
       }
     });
 
