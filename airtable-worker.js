@@ -165,10 +165,6 @@ export default {
       }
 
       const lead = await request.json();
-      if (lead.companyWebsite) {
-        return jsonResponse(request, env, { ok: true, ignored: true });
-      }
-
       if (!cleanText(lead.customerName) || !cleanText(lead.phone) || !cleanText(lead.zipCode)) {
         return jsonResponse(request, env, { error: "Missing required lead fields." }, 400);
       }

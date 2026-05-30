@@ -389,15 +389,6 @@
       color: #1e40af;
     }
 
-    .hp-field {
-      position: absolute;
-      left: -10000px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-
     .section {
       padding: 78px 0;
     }
@@ -834,11 +825,6 @@
             <input id="photos" name="photos" type="file" accept="image/*" multiple />
             <p class="field-help">Optional. Add up to 5 photos, 5 MB each, that show the job area.</p>
 
-            <div class="hp-field" aria-hidden="true">
-              <label for="companyWebsite">Company Website</label>
-              <input id="companyWebsite" name="companyWebsite" type="text" tabindex="-1" autocomplete="off" />
-            </div>
-
             <button class="button" id="submitButton" type="submit" style="width:100%; margin-top:18px;">Submit Quote Request</button>
             <p class="submit-status" id="submitStatus" aria-live="polite"></p>
             <p class="tiny-note">
@@ -1198,9 +1184,8 @@
     }
 
     function getPreviewPayload(leadData) {
-      const { companyWebsite, ...previewData } = leadData;
       return {
-        ...previewData,
+        ...leadData,
         photos: leadData.photos.map(({ dataUrl, ...photo }) => photo)
       };
     }
@@ -1262,8 +1247,7 @@
         serviceType: formData.get("serviceType"),
         timeline: formData.get("timeline"),
         details: getDynamicDetails(formData),
-        photos,
-        companyWebsite: formData.get("companyWebsite")
+        photos
       };
 
       requestPreview.textContent = JSON.stringify(getPreviewPayload(leadData), null, 2);
